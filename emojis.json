@@ -68,5 +68,33 @@
         "emoji_id": "1426411540470300794",
         "user_id": "1129784219418234950",
         "invalid": false
+    },
+    {
+        "name": "Kinslayer",
+        "emoji_name": ":kinslayer:",
+        "emoji_id": "0",
+        "user_id": "1220143952804708413",
+        "invalid": true
+    },
+    {
+        "name": "Ap4che (John Misdemeanor)",
+        "emoji_name": ":ap4che:",
+        "emoji_id": "0",
+        "user_id": "564266493966024732",
+        "invalid": true
+    },
+    {
+        "name": "Galaxy",
+        "emoji_name": ":galaxy:",
+        "emoji_id": "0",
+        "user_id": "790974289729421392",
+        "invalid": true
+    },
+    {
+        "name": "Dream",
+        "emoji_name": ":dream:",
+        "emoji_id": "0",
+        "user_id": "1096207481870495834",
+        "invalid": true
     }
 ]
