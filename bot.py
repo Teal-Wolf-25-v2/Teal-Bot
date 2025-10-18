@@ -27,12 +27,12 @@ if bot_commit.status_code == 200:
     bot_hash = bot_commit.json()["sha"]
     bot_hash_short = bot_hash[-7:]
     bot_updated = bot_commit.json()["commit"]["author"]["date"]
-    updated_unix = datetime_obj = datetime.strptime(bot_updated, "%Y-%m-%dT%H:%M:%SZ").timestamp()
+    updated_unix = int(datetime.strptime(bot_updated, "%Y-%m-%dT%H:%M:%SZ").timestamp())
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
 bot_version = "0.1.0"
-bot_uptime = datetime.now().timestamp()
+bot_uptime = int(datetime.now().timestamp())
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
 bot_info.set_author(name="Teal Wolf 25",url="https://repo.tw25.net",icon_url=owner_pfp)
