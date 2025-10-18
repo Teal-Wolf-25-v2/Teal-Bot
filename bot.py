@@ -51,7 +51,7 @@ async def info(interaction):
 
 @client.event
 async def on_ready():
-    tree.sync()
+    await tree.sync()
     print(f'{client.user} has connected to Discord!')
 
 client.run(TOKEN)
