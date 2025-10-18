@@ -31,7 +31,7 @@ if bot_commit.status_code == 200:
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
-bot_version = "0.2.2"
+bot_version = "0.2.3"
 bot_uptime = int(datetime.now().timestamp())
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
@@ -52,7 +52,7 @@ for emoji_obj in emoji_objects:
         emoji = "Invalid Emoji!"
         maafia_invalids = maafia_invalids+"<@"+emoji_obj["user_id"]+">"
     else:
-        emoji = "<"+emoji_obj["emoji_name"]+emoji_obj["emoji_id"]
+        emoji = "<"+emoji_obj["emoji_name"]+emoji_obj["emoji_id"]+">"
     maafia_voting.add_field(name=emoji_holder,value=emoji,inline=False)
 maafia_invalids=maafia_invalids+" Please send Teal a valid emoji to use"
 maafia_voting.add_field(name="Skip",value="<:not_mafia:1281781263937573038>",inline=False)
