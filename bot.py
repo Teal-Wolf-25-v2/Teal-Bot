@@ -14,8 +14,12 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 bot_owner = 1129784219418234950
-owner_pfp_raw = client.get_user(bot_owner).avatar()
-owner_pfp = owner_pfp_raw.url()
+owner_raw = client.get_user(bot_owner)
+if owner_raw != None:
+    owner_pfp_raw = owner_raw.avatar()
+    owner_pfp = owner_pfp_raw.url()
+else:
+    owner_pfp = f"https://avatars.githubusercontent.com/u/155310651?v=4"
 
 bot_pfp = client.user.avatar().url()
 bot_commit = requests.get("https://api.github.com/repos/Teal-Wolf-25-v2/Teal-Bot/commits/main")
