@@ -36,7 +36,7 @@ bot_uptime = datetime.now().timestamp()
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
 bot_info.set_author(name="Teal Wolf 25",url="https://repo.tw25.net",icon_url=owner_pfp)
-bot_info.set_thumbnail(bot_pfp)
+bot_info.set_thumbnail(url=bot_pfp)
 bot_info.add_field(name="Version",value=f"{bot_version} `{bot_hash_short}`",inline=False)
 bot_info.add_field(name="Handles",value="- Bot Info",inline=False)
 bot_info.add_field(name="Last Updated",value=f"<t:{updated_unix}:F> (<t:{updated_unix}:R>)")
