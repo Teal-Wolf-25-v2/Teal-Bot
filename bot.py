@@ -68,7 +68,7 @@ async def info(interaction):
     description="Prompts the Maafia Voting embed message"
 )
 async def maafia(interaction):
-    await interaction.response.send_message(content=maafia_invalids,embed=maafia_voting,allowed_mentions=discord.AllowedMentions.everyone)
+    await interaction.response.send_message(content=maafia_invalids,embed=maafia_voting,allowed_mentions=discord.AllowedMentions(everyone=True))
 
 commands = [com for com in tree.walk_commands() if isinstance(com, app_commands.Command)]
 bot_info.add_field(name="Existing Commands",value=len(commands),inline=False)
