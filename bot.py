@@ -31,7 +31,7 @@ if bot_commit.status_code == 200:
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
-bot_version = "0.2.1"
+bot_version = "0.2.2"
 bot_uptime = int(datetime.now().timestamp())
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
@@ -61,12 +61,12 @@ maafia_voting.add_field(name="Skip",value="<:not_mafia:1281781263937573038>",inl
     name="info",
     description="Get the bot info for Cyan"
 )
+async def info(interaction):
+    await interaction.response.send_message(embed=bot_info)
 @tree.command(
     name="maafia",
     description="Prompts the Maafia Voting embed message"
 )
-async def info(interaction):
-    await interaction.response.send_message(embed=bot_info)
 async def maafia(interaction):
     await interaction.response.send_message(content=maafia_invalids,embed=maafia_voting)
 
