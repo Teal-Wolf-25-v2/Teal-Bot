@@ -31,7 +31,7 @@ if bot_commit.status_code == 200:
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
-bot_version = "0.3.0"
+bot_version = "0.2.6"
 bot_uptime = int(datetime.now().timestamp())
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
