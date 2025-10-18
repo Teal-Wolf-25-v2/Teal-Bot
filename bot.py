@@ -21,7 +21,7 @@ if owner_raw != None:
 else:
     owner_pfp = f"https://avatars.githubusercontent.com/u/155310651?v=4"
 
-bot_pfp = client.user.avatar().url()
+bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 bot_commit = requests.get("https://api.github.com/repos/Teal-Wolf-25-v2/Teal-Bot/commits/main")
 if bot_commit.status_code == 200:
     bot_hash = bot_commit.json()[0]["sha"]
