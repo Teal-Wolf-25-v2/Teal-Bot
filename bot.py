@@ -25,13 +25,13 @@ bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=tr
 bot_commit = requests.get("https://api.github.com/repos/Teal-Wolf-25-v2/Teal-Bot/commits/main")
 if bot_commit.status_code == 200:
     bot_hash = bot_commit.json()["sha"]
-    bot_hash_short = bot_hash[-7:]
+    bot_hash_short = "["+bot_hash[-7:]+"](https://repo.tw25.net/Teal-Bot/commit/"+bot_hash+")"
     bot_updated = bot_commit.json()["commit"]["author"]["date"]
     updated_unix = int(datetime.fromisoformat(bot_updated.replace("Z","+00:00")).timestamp())
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
-bot_version = "0.1.0"
+bot_version = "0.2.0"
 bot_uptime = int(datetime.now().timestamp())
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
@@ -42,13 +42,33 @@ bot_info.add_field(name="Handles",value="- Bot Info",inline=False)
 bot_info.add_field(name="Last Updated",value=f"<t:{updated_unix}:F> (<t:{updated_unix}:R>)")
 bot_info.add_field(name="Uptime",value=f"Since <t:{bot_uptime}:R>")
 
+maafia_voting=discord.Embed(color=0xbb00ff,title="Maafia Voting",description="React with the emoji that matches the person you want to vote")
+with open("emojis.json","r") as file:
+    emoji_objects=json.load(file)
+maafia_invalids = ""
+for emoji_obj in emoji_objects:
+    emoji_holder = emoji_obj.__name__+" <@"+emoji_obj["user_id"]+">"
+    if emoji_obj["invalid"] == True:
+        emoji = "Invalid Emoji!"
+        maafia_invalids = maafia_invalids+"<@"+emoji_obj["user_id"]+">"
+    else:
+        emoji = "<"+emoji_obj["emoji_name"]+emoji_obj["emoji_id"]
+    maafia_voting.add_field(name=emoji_holder,value=emoji,inline=False)
+maafia_invalids=maafia_invalids+" Please send Teal a valid emoji to use"
+maafia_voting.add_field(name="Skip",value="<:not_mafia:1281781263937573038>",inline=False)
 
 @tree.command(
     name="info",
     description="Get the bot info for Cyan"
 )
+@tree.command(
+    name="maafia",
+    description="Prompts the Maafia Voting embed message"
+)
 async def info(interaction):
     await interaction.response.send_message(embed=bot_info)
+async def maafia(interaction):
+    await interaction.response.send_message(content=maafia_invalids,embed=maafia_voting)
 
 commands = [com for com in tree.walk_commands() if isinstance(com, app_commands.Command)]
 bot_info.add_field(name="Existing Commands",value=len(commands),inline=False)

@@ -1,0 +1,53 @@
+{
+    "Abby":{
+        "emoji_name": ":abby:",
+        "emoji_id": "1428637018623315968",
+        "user_id": "1153033972062900244"
+    },
+    "Elmer":{
+        "emoji_name": ":elmer:",
+        "emoji_id": "1427441413510922332",
+        "user_id": "760917452485427230"
+    },
+    "MasterCat":{
+        "emoji_name": ":mastercat:",
+        "emoji_id": "1427432852655570944",
+        "user_id": "901605209812369478"
+    },
+    "paax":{
+        "emoji_name": ":paax:",
+        "emoji_id": "1426730894206701598",
+        "user_id": "1026190326177738752"
+    },
+    "Melody":{
+        "emoji_name": ":melody:",
+        "emoji_id": "1426707094463315998",
+        "user_id": "1073982555713450084"
+    },
+    "wind":{
+        "emoji_name": ":wind:",
+        "emoji_id": "1426430704245407844",
+        "user_id": "1147515124781953034"
+    },
+    "Xander (Pronounced Zander)":{
+        "emoji_name": ":mythril:",
+        "emoji_id": "1426428802900299807",
+        "user_id": "8577013084871721046",
+        "invalid": true
+    },
+    "shizu":{
+        "emoji_name": ":shizu:",
+        "emoji_id": "1426415395522482176",
+        "user_id": "1058583549202137128"
+    },
+    "PJ":{
+        "emoji_name": ":pj:",
+        "emoji_id": "1426411718145478777",
+        "user_id": "989923865595617300"
+    },
+    "Teal":{
+        "emoji_name": ":tw25:",
+        "emoji_id": "1426411540470300794",
+        "user_id": "1129784219418234950"
+    }
+}
