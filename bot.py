@@ -50,7 +50,7 @@ bot_info.add_field(name="Uptime",value=f"Since <t:{bot_uptime}:R>")
 async def info(interaction):
     await interaction.response.send_message(embed=bot_info)
 
-commands = [com for com in client.tree.walk_commands() if isinstance(com, app_commands.Command)]
+commands = [com for com in tree.walk_commands() if isinstance(com, app_commands.Command)]
 bot_info.add_field(name="Existing Commands",value=len(commands),inline=False)
 
 @client.event
