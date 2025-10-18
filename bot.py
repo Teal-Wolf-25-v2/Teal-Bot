@@ -27,7 +27,7 @@ if bot_commit.status_code == 200:
     bot_hash = bot_commit.json()["sha"]
     bot_hash_short = bot_hash[-7:]
     bot_updated = bot_commit.json()["commit"]["author"]["date"]
-    updated_unix = int(datetime.strptime(bot_updated, "%Y-%m-%dT%H:%M:%SZ").timestamp())
+    updated_unix = int(datetime.fromisoformat(bot_updated.replace("Z","+00:00")).timestamp())
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
