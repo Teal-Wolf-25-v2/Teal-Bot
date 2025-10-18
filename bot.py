@@ -42,12 +42,16 @@ bot_info.add_field(name="Handles",value="- Bot Info",inline=False)
 bot_info.add_field(name="Last Updated",value=f"<t:{updated_unix}:F> (<t:{updated_unix}:R>)")
 bot_info.add_field(name="Uptime",value=f"Since <t:{bot_uptime}:R>")
 
+
 @tree.command(
     name="info",
     description="Get the bot info for Cyan"
 )
 async def info(interaction):
     await interaction.response.send_message(embed=bot_info)
+
+commands = [com for com in client.tree.walk_commands() if isinstance(com, app_commands.Command)]
+bot_info.add_field(name="Existing Commands",value=len(commands),inline=False)
 
 @client.event
 async def on_ready():
