@@ -31,14 +31,14 @@ if bot_commit.status_code == 200:
 else:
     bot_hash = "Error: Not Found"
     bot_hash_short = "null"
-bot_version = "0.2.3"
+bot_version = "0.2.4"
 bot_uptime = int(datetime.now().timestamp())
 
 bot_info=discord.Embed(color=0x00ffff,title="Cyan",url="https://repo.tw25.net/Teal-Bot",description="Discord bot to handle various Teal Wolf 25's Nexus functions.")
 bot_info.set_author(name="Teal Wolf 25",url="https://repo.tw25.net",icon_url=owner_pfp)
 bot_info.set_thumbnail(url=bot_pfp)
 bot_info.add_field(name="Version",value=f"{bot_version} `{bot_hash_short}`",inline=False)
-bot_info.add_field(name="Handles",value="- Bot Info",inline=False)
+bot_info.add_field(name="Handles",value="- Bot Info\n- Maafia Voting\n  - Embed Message",inline=False)
 bot_info.add_field(name="Last Updated",value=f"<t:{updated_unix}:F> (<t:{updated_unix}:R>)")
 bot_info.add_field(name="Uptime",value=f"Since <t:{bot_uptime}:R>")
 
@@ -47,7 +47,7 @@ with open("emojis.json","r") as file:
     emoji_objects=json.load(file)
 maafia_invalids = ""
 for emoji_obj in emoji_objects:
-    emoji_holder = emoji_obj["name"]+" <@"+emoji_obj["user_id"]+">"
+    emoji_holder = emoji_obj["name"]
     if emoji_obj["invalid"] == True:
         emoji = "Invalid Emoji!"
         maafia_invalids = maafia_invalids+"<@"+emoji_obj["user_id"]+">"
