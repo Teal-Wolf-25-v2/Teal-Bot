@@ -24,9 +24,9 @@ else:
 bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 bot_commit = requests.get("https://api.github.com/repos/Teal-Wolf-25-v2/Teal-Bot/commits/main")
 if bot_commit.status_code == 200:
-    bot_hash = bot_commit.json()[0]["sha"]
+    bot_hash = bot_commit.json()["sha"]
     bot_hash_short = bot_hash[-7:]
-    bot_updated = bot_commit.json()[0]["commit"]["author"]["date"]
+    bot_updated = bot_commit.json()["commit"]["author"]["date"]
     updated_unix = datetime_obj = datetime.strptime(bot_updated, "%Y-%m-%dT%H:%M:%SZ").timestamp()
 else:
     bot_hash = "Error: Not Found"
