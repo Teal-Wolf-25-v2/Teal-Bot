@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "0.2.9"
+BOT_VERSION = "0.2.10"
 
 bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 
