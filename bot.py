@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "0.3.0"
+BOT_VERSION = "0.3.1"
 
 bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 
@@ -69,7 +69,8 @@ def maafia_voting_embed(vc_list):
 
             maafia_voting.add_field(name=emoji_holder, value=emoji, inline=False)
 
-    maafia_invalids += " Please send Teal a valid emoji to use"
+    if maafia_invalids != "":
+        maafia_invalids += " Please send Teal a valid emoji to use"
     maafia_voting.add_field(name="Skip", value="<:not_mafia:1281781263937573038>", inline=False)
 
     return maafia_voting, maafia_invalids
