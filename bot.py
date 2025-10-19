@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "0.2.10"
+BOT_VERSION = "0.2.11"
 
 bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 
@@ -82,7 +82,7 @@ async def info(interaction: discord.Interaction):
 
 @tree.command(name="maafia", description="Prompts the Maafia Voting embed message")
 async def maafia(interaction: discord.Interaction):
-    maafia_channel_id = 1273030319477362823  # your VC ID
+    maafia_channel_id = 1273030319477362823  # The Maafia Voice Channel
     maafia_channel = interaction.guild.get_channel(maafia_channel_id)
 
     if not maafia_channel or not isinstance(maafia_channel, discord.VoiceChannel):
@@ -115,7 +115,7 @@ async def maafia(interaction: discord.Interaction):
     for emoji_obj in emoji_objects:
         if emoji_obj["user_id"] in member_ids and not emoji_obj.get("invalid", False):
             emoji_id = emoji_obj["emoji_id"]
-            emoji_name = emoji_obj["emoji_name"].strip(":")
+            emoji_name = emoji_obj["emoji_name"]
             try:
                 # Custom emoji format: <:name:id>
                 emoji = f"<{emoji_name}{emoji_id}>"
