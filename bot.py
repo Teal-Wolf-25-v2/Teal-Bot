@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "0.2.11"
+BOT_VERSION = "0.3.0"
 
 bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 
@@ -41,7 +41,7 @@ bot_info = discord.Embed(
 )
 bot_info.set_thumbnail(url=bot_pfp)
 bot_info.add_field(name="Version", value=f"{BOT_VERSION} {bot_hash_short}", inline=False)
-bot_info.add_field(name="Handles", value="- Bot Info\n- Maafia Voting\n  - Embed Message", inline=False)
+bot_info.add_field(name="Handles", value="- Bot Info\n- Maafia Voting\n  - Embed Message\n  - Reactions", inline=False)
 bot_info.add_field(name="Last Updated", value=f"<t:{updated_unix}:F> (<t:{updated_unix}:R>)", inline=False)
 bot_info.add_field(name="Uptime", value=f"Since <t:{bot_uptime}:R>", inline=False)
 
@@ -128,6 +128,90 @@ async def maafia(interaction: discord.Interaction):
         await sent_msg.add_reaction("<:not_mafia:1281781263937573038>")
     except Exception as e:
         print(f"⚠️ Could not add skip reaction: {e}")
+
+@tree.command(name="maafia_edit", description="Edit an existing Maafia Voting embed by message link")
+@app_commands.describe(message_link="Link to the message to update (must be in this guild).")
+async def maafia_edit(interaction: discord.Interaction, message_link: str):
+    await interaction.response.defer(thinking=True)  # allows async work safely
+
+    # Parse message link: format https://discord.com/channels/<guild>/<channel>/<message>
+    try:
+        parts = message_link.strip().split("/")
+        guild_id = int(parts[-3])
+        channel_id = int(parts[-2])
+        message_id = int(parts[-1])
+    except (IndexError, ValueError):
+        await interaction.followup.send("❌ Invalid message link format.")
+        return
+
+    # Ensure message is from this guild
+    if interaction.guild.id != guild_id:
+        await interaction.followup.send("❌ That message isn’t in this server.")
+        return
+
+    # Fetch target message
+    channel = interaction.guild.get_channel(channel_id)
+    if not channel or not isinstance(channel, discord.TextChannel):
+        await interaction.followup.send("❌ Invalid text channel.")
+        return
+
+    try:
+        message = await channel.fetch_message(message_id)
+    except discord.NotFound:
+        await interaction.followup.send("❌ Message not found.")
+        return
+
+    # Identify voice channel
+    maafia_channel_id = 1273030319477362823
+    maafia_channel = interaction.guild.get_channel(maafia_channel_id)
+    if not maafia_channel or not isinstance(maafia_channel, discord.VoiceChannel):
+        await interaction.followup.send("❌ Voice channel not found.")
+        return
+
+    member_ids = [str(member.id) for member in maafia_channel.members]
+    if not member_ids:
+        await interaction.followup.send("⚠️ No members currently in the voice channel.")
+        return
+
+    # Load emojis dynamically
+    with open("emojis.json", "r") as file:
+        emoji_objects = json.load(file)
+
+    # Build updated embed and invalid text
+    maafia_voting, maafia_invalids = maafia_voting_embed(member_ids)
+
+    # Edit the existing message
+    await message.edit(content=maafia_invalids, embed=maafia_voting)
+
+    # Clear all existing reactions
+    try:
+        await message.clear_reactions()
+    except discord.Forbidden:
+        await interaction.followup.send("⚠️ I lack permission to clear reactions.")
+        return
+
+    # Reapply new reactions for members in VC
+    added = 0
+    for emoji_obj in emoji_objects:
+        if emoji_obj["user_id"] in member_ids and not emoji_obj.get("invalid", False):
+            emoji_id = emoji_obj["emoji_id"]
+            emoji_name = emoji_obj["emoji_name"].strip(":")
+            emoji = f"<:{emoji_name}:{emoji_id}>"
+            try:
+                await message.add_reaction(emoji)
+                added += 1
+            except Exception as e:
+                print(f"⚠️ Could not react with {emoji_name}: {e}")
+
+    # Add skip reaction
+    try:
+        await message.add_reaction("<:not_mafia:1281781263937573038>")
+    except Exception as e:
+        print(f"⚠️ Could not add skip reaction: {e}")
+
+    await interaction.followup.send(
+        f"✅ Updated embed and reapplied {added} emoji reactions on [this message]({message_link})."
+    )
 
 
 @client.event
