@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "1.1.0"
+BOT_VERSION = "1.1.1"
 
 MAAFIA_VC_ID = 1273030319477362823   # your Maafia voice channel ID
 LOG_CHANNEL_ID = None
@@ -101,11 +101,33 @@ def maafia_voting_embed(vc_list):
 # ─────────────────────────────────────────────
 # Slash Commands
 # ─────────────────────────────────────────────
-@tree.command(name="info", description="Get the bot info for Cyan (includes ping).")
+@tree.command(name="info", description="Get the bot info for Cyan (works in servers or DMs).")
 async def info(interaction: discord.Interaction):
     latency_ms = round(client.latency * 1000)
     embed = build_info_embed(latency_ms)
-    await interaction.response.send_message(embed=embed)
+
+    # Determine the context (guild or DM)
+    if interaction.guild is None:
+        # DM context — simplified info
+        embed.title = "Cyan (Direct Mode)"
+        embed.description = (
+            "Running in **Direct Message** mode.\n"
+            "Some features like Maafia voting, moderation tools, and voice tracking "
+            "require a Discord server context."
+        )
+        embed.set_footer(text=f"Requested by {interaction.user.display_name}")
+    else:
+        # Server context — show richer info
+        embed.set_footer(text=f"Server: {interaction.guild.name}")
+
+    try:
+        await interaction.response.send_message(embed=embed, ephemeral=False)
+    except discord.Forbidden:
+        # If we can’t send in a channel, fallback to DM
+        try:
+            await interaction.user.send(embed=embed)
+        except Exception:
+            print("⚠️ Could not send /info embed to user or channel.")
 
 
 @tree.command(name="maafia", description="Prompts the Maafia Voting embed message")
