@@ -96,5 +96,12 @@
         "emoji_id": "0",
         "user_id": "1096207481870495834",
         "invalid": true
+    },
+    {
+        "name": "Bloody",
+        "emoji_name": ":bloody:",
+        "emoji_id": "1429265555596120235",
+        "user_id": "1214965661416296531",
+        "invalid": false
     }
 ]
