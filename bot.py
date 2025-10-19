@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "1.0.1"
+BOT_VERSION = "1.1.0"
 
 MAAFIA_VC_ID = 1273030319477362823   # your Maafia voice channel ID
 LOG_CHANNEL_ID = None
@@ -46,7 +46,23 @@ def build_info_embed(latency_ms: int = 0):
     )
     embed.set_thumbnail(url=BOT_PFP)
     embed.add_field(name="Version", value=f"{BOT_VERSION} {bot_hash_short}", inline=False)
-    embed.add_field(name="Handles", value="- Bot Info\n- Maafia Voting\n  - Embed Message\n  - Reactions", inline=False)
+    handles_value = (
+    "- Bot Info\n"
+    "  - `/info` — Displays version, uptime, last update, and ping.\n"
+    "  - Automatically updates commit info from GitHub.\n\n"
+    "- Maafia Voting System\n"
+    "  - `/maafia` — Creates the voting embed and reactions.\n"
+    "  - `/maafia_results` — Counts votes and shows top-voted player.\n"
+    "  - Auto-updates the voting embed when users join/leave the Maafia VC.\n"
+    "  - Stores the latest voting message for automated refreshes.\n\n"
+    "- Voice Channel Tools\n"
+    "  - `/vc_record` — Logs all current VC members with timestamps.\n"
+    "- Moderator System\n"
+    "  - `/mod_msg` — Lets members send private reports or notes to moderators.\n"
+    "  - Supports optional message link previews for rule-breaking reports.\n"
+    "  - Pings the moderator role `<@&1388997170656575569>` in the mod channel."
+)
+    embed.add_field(name="Handles", value=handles_value, inline=False)
     embed.add_field(name="Last Updated", value=f"<t:{updated_unix}:F> (<t:{updated_unix}:R>)", inline=False)
     embed.add_field(name="Uptime", value=f"Since <t:{uptime}:R>", inline=False)
     embed.add_field(name="Ping", value=f"{latency_ms} ms", inline=False)
@@ -216,6 +232,84 @@ async def vc_record(interaction: discord.Interaction):
     with open("records/vc_records.json", "a") as f:
         f.write(json.dumps(record) + "\n")
     await interaction.response.send_message(f"✅ Recorded {len(members)} member(s) in VC.")
+
+@tree.command(
+    name="mod_msg",
+    description="Send a private message to the moderators (optionally include a message link).",
+)
+@app_commands.describe(
+    note="Your message or report for the moderators.",
+    message_link="Optional link to the message you're reporting (if applicable).",
+)
+async def mod_msg(interaction: discord.Interaction, note: str, message_link: str = None):
+    mod_channel_id = 1253166365100085342
+    mod_role_ping = "<@&1388997170656575569>"  # Moderator role ping
+    mod_channel = interaction.guild.get_channel(mod_channel_id)
+
+    if not mod_channel:
+        await interaction.response.send_message(
+            "❌ Could not find the moderator channel.", ephemeral=True
+        )
+        return
+
+    # Build the base embed
+    embed = discord.Embed(
+        title="Concern for Moderators",
+        color=0xFF8800,
+        timestamp=datetime.now(),
+        description=note,
+    )
+    embed.set_author(
+        name=f"{interaction.user.display_name} ({interaction.user.id})",
+        icon_url=interaction.user.avatar.url if interaction.user.avatar else None,
+    )
+    embed.add_field(
+        name="Reporter",
+        value=f"{interaction.user.mention} (`{interaction.user.id}`)",
+        inline=False,
+    )
+
+    # Try to attach reported message details (if provided)
+    if message_link:
+        try:
+            parts = message_link.strip().split("/")
+            guild_id = int(parts[-3])
+            channel_id = int(parts[-2])
+            msg_id = int(parts[-1])
+            if guild_id != interaction.guild.id:
+                raise ValueError("Message not in this server.")
+            channel = interaction.guild.get_channel(channel_id)
+            if channel:
+                msg = await channel.fetch_message(msg_id)
+                link_field = (
+                    f"[Jump to Message]({message_link})\n"
+                    f"**Author:** {msg.author.mention}\n"
+                    f"**Content:** {msg.content[:300]}{'...' if len(msg.content) > 300 else ''}"
+                )
+                embed.add_field(name="Reported Message", value=link_field, inline=False)
+            else:
+                embed.add_field(name="Reported Message", value=f"[Jump to Message]({message_link})", inline=False)
+        except Exception as e:
+            embed.add_field(
+                name="Message Link Error",
+                value=f"⚠️ Could not process message link.\n`{e}`",
+                inline=False,
+            )
+
+    # Send message with role ping outside the embed
+    try:
+        await mod_channel.send(
+            content=f"{mod_role_ping} — new report received.",
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(roles=True),
+        )
+        await interaction.response.send_message(
+            "✅ Your message has been sent to the moderators.", ephemeral=True
+        )
+    except Exception as e:
+        await interaction.response.send_message(
+            f"⚠️ Failed to send to moderators:\n`{e}`", ephemeral=True
+        )
 
 
 # ─────────────────────────────────────────────
