@@ -14,9 +14,8 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "1.1.1"
+BOT_VERSION = "1.1.2"
 
-MAAFIA_VC_ID = 1273030319477362823   # your Maafia voice channel ID
 LOG_CHANNEL_ID = None
 BOT_PFP = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 
@@ -131,16 +130,35 @@ async def info(interaction: discord.Interaction):
             print("⚠️ Could not send /info embed to user or channel.")
 
 
-@tree.command(name="maafia", description="Prompts the Maafia Voting embed message")
-async def maafia(interaction: discord.Interaction):
-    maafia_channel = interaction.guild.get_channel(MAAFIA_VC_ID)
+@tree.command(
+    name="maafia",
+    description="Prompts the Maafia Voting embed message in a specified (or default) voice channel."
+)
+@app_commands.describe(
+    channel_id="Optional voice channel ID for Maafia voting (defaults to the main Maafia VC)."
+)
+async def maafia(interaction: discord.Interaction, channel_id: str = None):
+    DEFAULT_MAAFIA_VC_ID = 1273030319477362823
+
+    # Parse channel ID
+    if channel_id:
+        try:
+            vc_id = int(channel_id)
+        except ValueError:
+            await interaction.response.send_message("❌ Invalid channel ID format.", ephemeral=True)
+            return
+    else:
+        vc_id = DEFAULT_MAAFIA_VC_ID
+
+    # Fetch channel and validate
+    maafia_channel = interaction.guild.get_channel(vc_id)
     if not maafia_channel or not isinstance(maafia_channel, discord.VoiceChannel):
-        await interaction.response.send_message("❌ Voice channel not found or invalid.")
+        await interaction.response.send_message("❌ Voice channel not found or invalid.", ephemeral=True)
         return
 
     member_ids = [str(m.id) for m in maafia_channel.members]
     if not member_ids:
-        await interaction.response.send_message("No members are currently in the voice channel.")
+        await interaction.response.send_message("⚠️ No members are currently in that voice channel.", ephemeral=True)
         return
 
     with open("emojis.json", "r") as file:
@@ -152,12 +170,17 @@ async def maafia(interaction: discord.Interaction):
         embed=maafia_voting,
         allowed_mentions=discord.AllowedMentions(users=True),
     )
+
     sent_msg = await interaction.original_response()
 
-    # Save this message ID for auto-updates
+    # Store info for later auto-updates
     with open("maafia_message.json", "w") as f:
-        json.dump({"channel_id": sent_msg.channel.id, "message_id": sent_msg.id}, f)
+        json.dump(
+            {"channel_id": sent_msg.channel.id, "message_id": sent_msg.id, "voice_channel_id": vc_id},
+            f
+        )
 
+    # Add reactions
     for emoji_obj in emoji_objects:
         if emoji_obj["user_id"] in member_ids and not emoji_obj.get("invalid", False):
             emoji_id = emoji_obj["emoji_id"]
@@ -166,6 +189,7 @@ async def maafia(interaction: discord.Interaction):
                 await sent_msg.add_reaction(f"<{emoji_name}{emoji_id}>")
             except Exception as e:
                 print(f"⚠️ Could not react with {emoji_name}: {e}")
+
     try:
         await sent_msg.add_reaction("<:not_mafia:1281781263937573038>")
     except Exception as e:
@@ -244,7 +268,14 @@ async def status_set(interaction: discord.Interaction, activity_type: str, messa
 
 @tree.command(name="vc_record", description="Save a timestamped record of all users in the Maafia voice channel.")
 async def vc_record(interaction: discord.Interaction):
-    vc = interaction.guild.get_channel(MAAFIA_VC_ID)
+    try:
+        with open("maafia_message.json", "r") as f:
+            stored = json.load(f)
+        vc = interaction.guild.get_channel(stored.get("voice_channel_id"))
+    except Exception:
+        await interaction.response.send_message("⚠️ No Maafia voice channel recorded yet.")
+        return
+
     if not vc or not isinstance(vc, discord.VoiceChannel):
         await interaction.response.send_message("❌ Voice channel not found.")
         return
@@ -338,42 +369,65 @@ async def mod_msg(interaction: discord.Interaction, note: str, message_link: str
 # ─────────────────────────────────────────────
 # Events
 # ─────────────────────────────────────────────
+
 @client.event
 async def on_voice_state_update(member, before, after):
-    joined = after.channel and after.channel.id == MAAFIA_VC_ID
-    left = before.channel and before.channel.id == MAAFIA_VC_ID and after.channel != before.channel
+    # Load stored Maafia message info (includes voice channel)
+    try:
+        with open("maafia_message.json", "r") as f:
+            stored = json.load(f)
+        tracked_vc_id = stored.get("voice_channel_id")
+        tracked_channel_id = stored.get("channel_id")
+        tracked_message_id = stored.get("message_id")
+    except Exception:
+        # No active Maafia message yet
+        return
+
+    # Get the tracked voice channel
+    vc = member.guild.get_channel(tracked_vc_id)
+    if not vc:
+        return
+
+    # Check if the user joined or left the tracked Maafia VC
+    joined = after.channel and after.channel.id == tracked_vc_id
+    left = before.channel and before.channel.id == tracked_vc_id and after.channel != before.channel
     if not (joined or left):
         return
 
-    msg = f"🔊 **{member.display_name}** joined the Maafia VC." if joined else f"🔇 **{member.display_name}** left the Maafia VC."
+    # Optional: log join/leave
+    msg = (
+        f"🔊 **{member.display_name}** joined the Maafia VC."
+        if joined
+        else f"🔇 **{member.display_name}** left the Maafia VC."
+    )
     print(msg)
-    log_channel = member.guild.get_channel(LOG_CHANNEL_ID)
+
+    log_channel = member.guild.get_channel(1273045364053129266)  # your log channel
     if log_channel:
         await log_channel.send(msg)
 
-    # Auto-update Maafia embed
+    # Update the Maafia embed automatically
     try:
-        with open("maafia_message.json", "r") as f:
-            data = json.load(f)
-        ch = member.guild.get_channel(data["channel_id"])
-        msg_obj = await ch.fetch_message(data["message_id"])
-    except Exception:
-        print("⚠️ No Maafia message recorded for auto-update.")
+        msg_channel = member.guild.get_channel(tracked_channel_id)
+        msg_obj = await msg_channel.fetch_message(tracked_message_id)
+    except Exception as e:
+        print(f"⚠️ Could not fetch Maafia message for update: {e}")
         return
 
-    vc = member.guild.get_channel(MAAFIA_VC_ID)
-    if not vc:
-        return
     member_ids = [str(m.id) for m in vc.members]
     maafia_voting, maafia_invalids = maafia_voting_embed(member_ids)
-    await msg_obj.edit(content=maafia_invalids, embed=maafia_voting)
+
     try:
+        await msg_obj.edit(content=maafia_invalids, embed=maafia_voting)
         await msg_obj.clear_reactions()
     except discord.Forbidden:
-        print("⚠️ Missing permission to clear reactions.")
+        print("⚠️ Missing permission to edit or clear reactions.")
+        return
 
+    # Reapply reactions
     with open("emojis.json", "r") as file:
         emoji_objects = json.load(file)
+
     for emoji_obj in emoji_objects:
         if emoji_obj["user_id"] in member_ids and not emoji_obj.get("invalid", False):
             emoji = f"<{emoji_obj['emoji_name']}{emoji_obj['emoji_id']}>"
@@ -381,11 +435,11 @@ async def on_voice_state_update(member, before, after):
                 await msg_obj.add_reaction(emoji)
             except Exception as e:
                 print(f"⚠️ Could not react with {emoji_obj['emoji_name']}: {e}")
+
     try:
         await msg_obj.add_reaction("<:not_mafia:1281781263937573038>")
     except Exception as e:
         print(f"⚠️ Could not add skip reaction: {e}")
-
 
 # ─────────────────────────────────────────────
 # Ready
