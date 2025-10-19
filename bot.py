@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "1.0.0"
+BOT_VERSION = "1.0.1"
 
 MAAFIA_VC_ID = 1273030319477362823   # your Maafia voice channel ID
 LOG_CHANNEL_ID = None
@@ -175,7 +175,7 @@ async def maafia_results(interaction: discord.Interaction, message_link: str):
         if len(voters) > top_count:
             top_emoji, top_count = emoji, len(voters)
     if top_emoji:
-        embed.add_field(name="🏆 Top Voted", value=f"{top_emoji} — {top_count} vote(s)", inline=False)
+        embed.add_field(name="<:mafia:1281781262671020104> Voted Out", value=f"{top_emoji} — {top_count} vote(s)", inline=False)
     await interaction.followup.send(embed=embed)
 
 
