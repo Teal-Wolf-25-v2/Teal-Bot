@@ -102,6 +102,7 @@ def maafia_voting_embed(vc_list):
 # Slash Commands
 # ─────────────────────────────────────────────
 @tree.command(name="info", description="Get the bot info for Cyan (works in servers or DMs).")
+@app_commands.guild_only(False)
 async def info(interaction: discord.Interaction):
     latency_ms = round(client.latency * 1000)
     embed = build_info_embed(latency_ms)
