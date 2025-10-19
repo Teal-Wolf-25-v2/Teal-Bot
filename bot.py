@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "1.1.2"
+BOT_VERSION = "1.1.3"
 
 LOG_CHANNEL_ID = None
 BOT_PFP = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
@@ -101,7 +101,6 @@ def maafia_voting_embed(vc_list):
 # Slash Commands
 # ─────────────────────────────────────────────
 @tree.command(name="info", description="Get the bot info for Cyan (works in servers or DMs).")
-@app_commands.guild_only(False)
 async def info(interaction: discord.Interaction):
     latency_ms = round(client.latency * 1000)
     embed = build_info_embed(latency_ms)
