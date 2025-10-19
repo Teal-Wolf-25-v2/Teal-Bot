@@ -94,12 +94,40 @@ async def maafia(interaction: discord.Interaction):
         await interaction.response.send_message("No members are currently in the voice channel.")
         return
 
+    # Load emoji data dynamically
+    with open("emojis.json", "r") as file:
+        emoji_objects = json.load(file)
+
+    # Build the voting embed
     maafia_voting, maafia_invalids = maafia_voting_embed(member_ids)
+
+    # Send the embed first
     await interaction.response.send_message(
         content=maafia_invalids,
         embed=maafia_voting,
         allowed_mentions=discord.AllowedMentions(users=True),
     )
+
+    # Fetch the message we just sent (for adding reactions)
+    sent_msg = await interaction.original_response()
+
+    # Loop through each emoji in the JSON and add as reaction if it matches a user in VC
+    for emoji_obj in emoji_objects:
+        if emoji_obj["user_id"] in member_ids and not emoji_obj.get("invalid", False):
+            emoji_id = emoji_obj["emoji_id"]
+            emoji_name = emoji_obj["emoji_name"].strip(":")
+            try:
+                # Custom emoji format: <:name:id>
+                emoji = f"<{emoji_name}{emoji_id}>"
+                await sent_msg.add_reaction(emoji)
+            except Exception as e:
+                print(f"⚠️ Could not react with {emoji_name}: {e}")
+
+    # Finally add the "Skip" reaction
+    try:
+        await sent_msg.add_reaction("<:not_mafia:1281781263937573038>")
+    except Exception as e:
+        print(f"⚠️ Could not add skip reaction: {e}")
 
 
 @client.event
