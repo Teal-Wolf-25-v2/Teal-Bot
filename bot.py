@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 BOT_OWNER_ID = 1129784219418234950
-BOT_VERSION = "0.3.1"
+BOT_VERSION = "0.3.2"
 
 bot_pfp = "https://github.com/Teal-Wolf-25-v2/Teal-Bot/blob/main/icon.png?raw=true"
 
@@ -211,7 +211,7 @@ async def maafia_edit(interaction: discord.Interaction, message_link: str):
         print(f"⚠️ Could not add skip reaction: {e}")
 
     await interaction.followup.send(
-        f"✅ Updated embed and reapplied {added} emoji reactions on [this message]({message_link})."
+        f"✅ Updated embed and reapplied {added} emoji reactions on [this message]({message_link}).",ephemeral=True
     )
 
 
