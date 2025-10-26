@@ -2,9 +2,12 @@ import os
 import discord
 import json
 import requests
+from time import sleep
 from datetime import datetime
 from dotenv import load_dotenv
 from discord import app_commands
+
+sleep(5)
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")

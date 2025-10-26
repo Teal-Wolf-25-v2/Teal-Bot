@@ -103,5 +103,12 @@
         "emoji_id": "1429265555596120235",
         "user_id": "1214965661416296531",
         "invalid": false
+    },
+    {
+        "name": "Phoenix",
+        "emoji_name": ":phoenix:",
+        "emoji_id": "1431790208550047834",
+        "user_id": "1251329563154448456",
+        "invalid": false
     }
 ]
