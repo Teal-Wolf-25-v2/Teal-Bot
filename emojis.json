@@ -110,5 +110,19 @@
         "emoji_id": "1431790208550047834",
         "user_id": "1251329563154448456",
         "invalid": false
+    },
+    {
+        "name": "Cat man",
+        "emoji_name": ":cat_man:",
+        "emoji_id": "0",
+        "user_id": "1365430175247896616",
+        "invalid": true
+    },
+    {
+        "name": "Duck",
+        "emoji_name": ":duck:",
+        "emoji_id": "0",
+        "user_id": "1269763875117596703",
+        "invalid": true
     }
 ]
