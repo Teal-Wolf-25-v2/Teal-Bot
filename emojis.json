@@ -79,9 +79,9 @@
     {
         "name": "Ap4che (John Misdemeanor)",
         "emoji_name": ":ap4che:",
-        "emoji_id": "0",
+        "emoji_id": "1434704238608515254",
         "user_id": "564266493966024732",
-        "invalid": true
+        "invalid": false
     },
     {
         "name": "Galaxy",
@@ -121,8 +121,8 @@
     {
         "name": "Duck",
         "emoji_name": ":duck:",
-        "emoji_id": "0",
+        "emoji_id": "1434698692450979880",
         "user_id": "1269763875117596703",
-        "invalid": true
+        "invalid": false
     }
 ]
